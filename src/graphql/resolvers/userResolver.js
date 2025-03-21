@@ -1,21 +1,21 @@
 const bcrypt = require("bcrypt");
 const pool = require("../../config/database");
+const generateToken = require("../../utils/generateJwtToken");
+const setCookie = require("../../utils/setCookie");
 
 const userResolver = {
-    
   Mutation: {
     createUser: async (_, { name, email, phone_number, password }) => {
       try {
-        console.log(name,email,phone_number);
-        
-        
+        console.log(name, email, phone_number);
+
         const existingUser = await pool.query(
           "SELECT * FROM user_details WHERE email=$1",
           [email]
         );
 
         if (existingUser.rowCount > 0) throw new Error("user is already found");
-        const hashPassword = await bcrypt.hash(password,10)
+        const hashPassword = await bcrypt.hash(password, 10);
 
         const res = await pool.query(
           "INSERT INTO user_details(name,email,phone_number,password) VALUES ($1,$2,$3,$4) RETURNING user_id, name",
@@ -35,24 +35,36 @@ const userResolver = {
   },
 
   Query: {
-    getUser: async (_, { email, password }) => {
-      console.log("log from get user");
+    getUser: async (_, { email, password },{res}) => {
+      console.log("log from get user", email, password);
 
       try {
-        const res = await pool.query(
+        const response = await pool.query(
           "SELECT user_id,name ,password from user_details where email=$1",
           [email]
         );
 
-        if (res.rowCount === 0) return { emailError: true };
+        if (response.rowCount === 0) {
+          throw new Error("User Not Found");
+          return
+        }
 
-        const userData = res.rows[0];
+        const userData = response.rows[0];
+        const match = await bcrypt.compare(password, userData.password);
 
-        const match = bcrypt.compare(password,userData.password);
+        if (!match) {
+          throw new Error("Invalid Password");
+        }
 
-        if (!match) return { passwordError: true };
+        const user = {
+          id:userData.user_id,
+          role:"user"
+        }
 
-        return { ...res.rows[0], isAuthenticated: true };
+        const token = generateToken(user)
+        setCookie(token,res)
+
+        return userData; 
       } catch (err) {
         console.log("log from get user error", err);
         throw new Error(err);

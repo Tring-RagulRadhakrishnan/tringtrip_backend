@@ -6,10 +6,6 @@ const userDefs=gql`
         name:String
         email:String
         phone_number:String
-        isVerified:Boolean
-        emailError:Boolean
-        passwordError:Boolean
-        isAuthenticated:Boolean
     }
     
     type Query{
