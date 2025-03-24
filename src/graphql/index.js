@@ -9,10 +9,10 @@ const locationResolver = require('../graphql/resolvers/locationResolver.js');
 const faqsDefs = require("./typeDefs/faqsDefs.js");
 const faqsResolver = require("./resolvers/faqsResolver.js");
 
-// const packageDefs = require("../graphql/typeDefs/packageDefs.js")
-// const packageResolver = require("../graphql/resolvers/packageResolver.js")
+const packageDefs = require("../graphql/typeDefs/packageDefs.js")
+const packageResolver = require("../graphql/resolvers/packageResolver.js")
 
-const typeDefs=mergeTypeDefs([userDefs,locationDefs,faqsDefs])
-const resolvers=mergeResolvers([userResolver,locationResolver,faqsResolver])
+const typeDefs=mergeTypeDefs([userDefs,locationDefs,faqsDefs,packageDefs])
+const resolvers=mergeResolvers([userResolver,locationResolver,faqsResolver,packageResolver])
 
 module.exports={typeDefs,resolvers}

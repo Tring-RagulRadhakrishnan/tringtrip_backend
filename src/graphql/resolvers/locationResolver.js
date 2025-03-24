@@ -1,8 +1,12 @@
 const pool = require("../../config/database");
+const authMiddleware = require('../../middleware/authMiddleware')
 
 const locationResolver = {
   Query: {
-    getBestPackage: async () => {
+    getBestPackage: async (_,{},{req}) => {
+
+      const user = authMiddleware(req);
+      
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE rating = 5"
@@ -17,7 +21,8 @@ const locationResolver = {
       }
     },
 
-    getVisaFreePackage: async () => {
+    getVisaFreePackage: async (_,{},{req}) => {
+      const user = authMiddleware(req);
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE visa_free=true"
@@ -28,7 +33,8 @@ const locationResolver = {
         console.log("log from free visa resolver", err);
       }
     },
-    getInternationalPackage: async () => {
+    getInternationalPackage: async (_,{},{req}) => {
+      const user = authMiddleware(req);
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE is_international=true"

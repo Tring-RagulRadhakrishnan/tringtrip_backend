@@ -35,7 +35,7 @@ const userResolver = {
   },
 
   Query: {
-    getUser: async (_, { email, password },{res}) => {
+    login: async (_, { email, password }, { res }) => {
       console.log("log from get user", email, password);
 
       try {
@@ -46,7 +46,6 @@ const userResolver = {
 
         if (response.rowCount === 0) {
           throw new Error("User Not Found");
-          return
         }
 
         const userData = response.rows[0];
@@ -57,14 +56,16 @@ const userResolver = {
         }
 
         const user = {
-          id:userData.user_id,
-          role:"user"
-        }
+          id: userData.user_id,
+          role: "user",
+        };
 
-        const token = generateToken(user)
-        setCookie(token,res)
+        console.log(user);
 
-        return userData; 
+        const token = generateToken(user);
+        setCookie(token, res);
+
+        return userData;
       } catch (err) {
         console.log("log from get user error", err);
         throw new Error(err);

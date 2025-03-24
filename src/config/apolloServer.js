@@ -1,12 +1,18 @@
 const { ApolloServer } = require("apollo-server-express");
 const {typeDefs,resolvers} = require('../graphql/index.js')
+const authMiddleware = require('../middleware/authMiddleware.js')
 const apolloServer =async (app)=>{
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req, res }) => ({ req, res }),
+  // context: ({ req, res }) => {
+  //   const user = authMiddleware(req);
+  //   return { req, res, user };
+  // },
 });
-await server.start()
-server.applyMiddleware({app,cors:false})
+
+  await server.start()
+  server.applyMiddleware({app,cors:false})
 }
 module.exports = apolloServer
