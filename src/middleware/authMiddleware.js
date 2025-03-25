@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 require('dotenv').config()
-const SECRET_KEY = process.env.JWT_SECRET_KEY;
+  
 
 const authMiddleware = (req) => {
   const token = req?.headers?.cookie?.split("=")[1];
@@ -9,7 +9,7 @@ const authMiddleware = (req) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, SECRET_KEY);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     return decodedToken;
   } catch (err) {
     throw new Error("Invalid or expired token");
