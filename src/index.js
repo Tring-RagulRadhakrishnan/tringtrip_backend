@@ -1,57 +1,78 @@
+// const express = require("express");
+// const cors = require("cors");
+// require("dotenv").config();
+// const apolloServer = require("./config/apolloServer");
+
+// const app = express();
+
+// app.use(cors({
+//   origin: ["http://localhost:5173"],
+//   credentials: true,
+// }));
+
+// // app.use(cors());
+
+// const startServer = async () => {
+//   try {
+//     await apolloServer(app);
+//     app.listen(process.env.PORT , () => {
+//       console.log(`App is running on port ${process.env.PORT}`);
+//     });
+//   } catch (err) {
+//     console.error("Error in server startup:", err);
+//   }
+// };
+
+// startServer();
+
 const express = require("express");
 const cors = require("cors");
-const apolloServer = require("./config/apolloServer");
-require("dotenv").config()
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs")
+const stripe = require("stripe")(
+  "sk_test_51R6xZMI1bsoZ9PKQ6sVShdtoIE8rL1u5WsxvHgHxof9kSPp3F6PFkmzzHT5GJGmhTfZ8R5n5Fr3EdCrJjAODDtgx00cXNi2JM7"
+);
+require("dotenv").config();
 
 const app = express();
-app.use(cors({
-    origin: ["http://localhost:5173"], 
-    credentials:true,
-  }));
+const PORT = process.env.PORT || 8000;
 
-// app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount } = req.body;
 
-const uploadsDir = path.join(__dirname, 'uploads');
-
-
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadsDir); 
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); 
-    },
-});
-const upload = multer({ storage });
-
-
-app.use("/src/uploads", express.static(uploadsDir));
-
-
-app.post("/upload", upload.single("file"), (req, res) => {
-    console.log("Uploaded file:", req.file);
-
-    if (!req.file) {
-        return res.status(400).json({ message: "File upload failed" });
+    if (!amount) {
+      return res.status(400).json({ error: "Amount is required" });
     }
 
-   
-    res.status(200).json({ filePath: `/uploads/${req.file.filename}` });
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount, 
+      currency: "usd",
+      payment_method_types: ["card"],
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error("Error creating payment intent:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 const startServer = async () => {
-    try {
-        await apolloServer(app);
-        app.listen(process.env.PORT, () => {
-            console.log(`App is running on port ${process.env.PORT}`);
-        });
-    } catch (err) {
-        console.log("Error in server startup:", err);
-    }
+  try {
+    await apolloServer(app); // Apply Apollo Server middleware
+    app.listen(process.env.PORT, () => {
+      console.log(`App is running on port ${process.env.PORT}`);
+    });
+  } catch (err) {
+    console.error("Error in server startup:", err);
+  }
 };
 
 startServer();

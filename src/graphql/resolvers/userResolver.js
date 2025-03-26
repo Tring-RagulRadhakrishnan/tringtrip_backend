@@ -15,11 +15,11 @@ const userResolver = {
         );
 
         if (existingUser.rowCount > 0) throw new Error("user is already found");
-        const hashPassword = await bcrypt.hash(password, 10);
+        // const hashPassword = await bcrypt.hash(password, 10);
 
         const res = await pool.query(
           "INSERT INTO user_details(name,email,phone_number,password) VALUES ($1,$2,$3,$4) RETURNING user_id, name",
-          [name, email, phone_number, hashPassword]
+          [name, email, phone_number, password]
         );
 
         console.log(res.rows[0]);
