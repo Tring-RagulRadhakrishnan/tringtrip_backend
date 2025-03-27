@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const pool = require("../../config/database");
 const generateToken = require("../../utils/generateJwtToken");
 const setCookie = require("../../utils/setCookie");
+const authMiddleware = require("../../middleware/authMiddleware");
 
 const userResolver = {
   Mutation: {
@@ -71,6 +72,19 @@ const userResolver = {
         throw new Error(err);
       }
     },
+    getUser : async(_,{},{req})=>{
+      const userData = authMiddleware(req);
+      const id = userData?.id;
+      try{
+          const response = await pool.query("select user_id,name,email from user_details where user_id = $1",[id]);
+          if(response.rowCount===0)
+            throw new Error("User Not Found");
+          return response.rows[0];
+      }catch(err){
+          console.log("error from user resolver getUser",err);
+          
+      }
+    }
   },
 };
 

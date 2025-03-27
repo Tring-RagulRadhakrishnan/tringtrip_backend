@@ -31,18 +31,14 @@ const stripe = require("stripe")(
   "sk_test_51R6xZMI1bsoZ9PKQ6sVShdtoIE8rL1u5WsxvHgHxof9kSPp3F6PFkmzzHT5GJGmhTfZ8R5n5Fr3EdCrJjAODDtgx00cXNi2JM7"
 );
 require("dotenv").config();
-
+const apolloServer = require("./config/apolloServer");
 const app = express();
-const PORT = process.env.PORT || 8000;
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// app.use(cors());
+
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    credentials: true,
-  })
-);
+
 app.post("/create-payment-intent", async (req, res) => {
   try {
     const { amount } = req.body;
@@ -52,10 +48,12 @@ app.post("/create-payment-intent", async (req, res) => {
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount, 
-      currency: "usd",
+      amount,
+      currency: "inr",
       payment_method_types: ["card"],
     });
+    console.log(paymentIntent);
+    
 
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
@@ -66,7 +64,7 @@ app.post("/create-payment-intent", async (req, res) => {
 
 const startServer = async () => {
   try {
-    await apolloServer(app); // Apply Apollo Server middleware
+    await apolloServer(app);
     app.listen(process.env.PORT, () => {
       console.log(`App is running on port ${process.env.PORT}`);
     });

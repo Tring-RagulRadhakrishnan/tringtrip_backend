@@ -5,7 +5,7 @@ const locationResolver = {
   Query: {
     getBestPackage: async (_,{},{req}) => {
 
-      const user = authMiddleware(req);
+      // const user = authMiddleware(req);
       
       try {
         const response = await pool.query(
@@ -22,7 +22,7 @@ const locationResolver = {
     },
 
     getVisaFreePackage: async (_,{},{req}) => {
-      const user = authMiddleware(req);
+      // const user = authMiddleware(req);
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE visa_free=true"
@@ -34,7 +34,7 @@ const locationResolver = {
       }
     },
     getInternationalPackage: async (_,{},{req}) => {
-      const user = authMiddleware(req);
+      // const user = authMiddleware(req);
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE is_international=true"

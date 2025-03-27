@@ -10,6 +10,7 @@ const userDefs=gql`
     
     type Query{
         login(email:String!,password:String!):User
+    getUser:User
     }
 
     type Mutation{
