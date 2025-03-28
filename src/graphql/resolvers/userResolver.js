@@ -23,7 +23,7 @@ const userResolver = {
           [name, email, phone_number, password]
         );
 
-        console.log(res.rows[0]);
+        // console.log(res.rows[0]);
         console.log("user registration successfull");
 
         return res.rows[0];
@@ -31,6 +31,20 @@ const userResolver = {
         console.log("error from create user resolver");
         console.log(err.message);
         throw new Error(err.message);
+      }
+    },
+    updateUser: async (_, { name, phone_number, user_id }) => {
+      try {
+        const response = await pool.query(
+          "update user_details set name  = $1, phone_number = $2 where user_id = $3 returning user_id,name,email,phone_number",
+          [name, phone_number, user_id]
+        );
+        if (response.rowCount === 0) {
+          throw new Error("Error in Update");
+        }
+        return response.rows[0];
+      } catch (err) {
+        console.log("error log from updateUser resolver", err);
       }
     },
   },
@@ -72,19 +86,25 @@ const userResolver = {
         throw new Error(err);
       }
     },
-    getUser : async(_,{},{req})=>{
+    getUser: async (_, {}, { req }) => {
       const userData = authMiddleware(req);
       const id = userData?.id;
-      try{
-          const response = await pool.query("select user_id,name,email from user_details where user_id = $1",[id]);
-          if(response.rowCount===0)
+      try {
+        const response = await pool.query(
+          "select user_id,name,email,phone_number from user_details where user_id = $1",
+          [id]
+        );
+        response.rowCount === 0 &&
+          (() => {
             throw new Error("User Not Found");
-          return response.rows[0];
-      }catch(err){
-          console.log("error from user resolver getUser",err);
-          
+          })();
+        console.log(response.rows[0]);
+
+        return response.rows[0];
+      } catch (err) {
+        console.log("error from user resolver getUser", err);
       }
-    }
+    },
   },
 };
 
