@@ -14,18 +14,12 @@ const packageDefs = gql`
   type Query {
     getAllPackages(page: Int!): [Package]
     getPackageByLocation(location: String!): [Package]
-    getPackageBySearch(searchTerm:String!):[Package]
+    getPackageBySearch(searchTerm: String!): [Package]
   }
 
   type Mutation {
-    createPackage(
-      package_img: String!
-      title: String!
-      days: String!
-      visit_place: String!
-      price: Int!
-      location: String!
-    ): String
+    createPackage(package_img: String!, title: String!, days: String!, visit_place: String!, price: Int!, location: String!): String
+    updatePackage(package_img: String!, title: String!, days: String!, visit_place: String!, price: Int!, location: String!,package_id:Int!): String
   }
 `;
 
