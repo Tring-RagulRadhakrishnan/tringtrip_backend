@@ -29,14 +29,29 @@ const packageResolver = {
     ) => {
       try {
         const response = await pool.query(
-          "update packages set package_img=$1,title = $2,days = $3,visit_place = $4,price = $5,location = $6 where package_id = $6 returning package_id",
+          "update packages set package_img=$1,title = $2,days = $3,visit_place = $4,price = $5,location = $6 ,updated_at = CURRENT_TIMESTAMP where package_id = $7 returning package_id",
           [package_img, title, days, visit_place, price, location, package_id]
-        ); if (response.rowCount === 0) {
+        );
+        if (response.rowCount === 0) {
           throw new Error("Error in Update");
         }
-        return response.rows[0];
+        return "Update successfull";
       } catch (err) {
         console.log("error log from updateUser resolver", err);
+      }
+    },
+    deletePackage: async (_, { package_id }) => {
+      try {
+        const response = await pool.query(
+          "delete from packages where package_id = $1 returning package_id",
+          [package_id]
+        );
+        if (response.rowCount === 0) {
+          throw new Error("Error in Update");
+        }
+        return "package deleted";
+      } catch (err) {
+        console.log("error log from deletepackage resolver", err);
       }
     },
   },

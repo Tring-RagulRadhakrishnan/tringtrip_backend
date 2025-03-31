@@ -19,7 +19,8 @@ const packageDefs = gql`
 
   type Mutation {
     createPackage(package_img: String!, title: String!, days: String!, visit_place: String!, price: Int!, location: String!): String
-    updatePackage(package_img: String!, title: String!, days: String!, visit_place: String!, price: Int!, location: String!,package_id:Int!): String
+    updatePackage(package_img: String!, title: String!, days: String!, visit_place: String!, price: Int!, location: String!,package_id: Int!): String
+    deletePackage(package_id:Int!):String
   }
 `;
 
