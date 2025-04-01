@@ -99,6 +99,19 @@ const packageResolver = {
         console.log("error log from getPackageBySearch resolver", err);
       }
     },
+    getLowPackage: async () => {
+      try {
+        const response = await pool.query(
+          "SELECT p.* FROM packages p WHERE p.price = (SELECT MIN(p2.price) FROM packages p2 WHERE p2.location = p.location)"
+        );
+        if(response.rowCount===0)
+          throw new Error("package not found")
+        return response.rows
+      } catch (err) {
+        console.log("error log from getLowPackage",err);
+        
+      }
+    },
   },
 };
 

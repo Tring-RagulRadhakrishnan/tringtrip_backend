@@ -15,6 +15,7 @@ const packageDefs = gql`
     getAllPackages(page: Int!): [Package]
     getPackageByLocation(location: String!): [Package]
     getPackageBySearch(searchTerm: String!): [Package]
+    getLowPackage:[Package]
   }
 
   type Mutation {

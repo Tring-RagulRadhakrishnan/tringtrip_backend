@@ -47,6 +47,18 @@ const userResolver = {
         console.log("error log from updateUser resolver", err);
       }
     },
+    logout: async (_, {}, { res }) => {
+      try {
+        const response = await res.clearCookie("jwttoken", {
+          path: "/",
+          httpOnly: true,
+          sameSite: "Lax",
+        });
+        return "Logout Successfull";
+      } catch (err) {
+        console.log("error from userresolver logout", err);
+      }
+    },
   },
 
   Query: {
@@ -77,7 +89,10 @@ const userResolver = {
 
         console.log(user);
 
-        const token = generateToken(user);
+        const token = generateToken({
+          id: userData.user_id,
+          role: "user",
+        });
         setCookie(token, res);
 
         return userData;
@@ -91,7 +106,7 @@ const userResolver = {
       const id = userData?.id;
       try {
         const response = await pool.query(
-          "select user_id,name,email,phone_number from user_details where user_id = $1",
+          "select user_id,name,email,phone_number,role from user_details where user_id = $1",
           [id]
         );
         response.rowCount === 0 &&
@@ -105,6 +120,7 @@ const userResolver = {
         console.log("error from user resolver getUser", err);
       }
     },
+    
   },
 };
 

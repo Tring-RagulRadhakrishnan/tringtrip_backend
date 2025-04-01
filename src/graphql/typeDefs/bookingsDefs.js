@@ -2,6 +2,7 @@ const { gql } = require("apollo-server-express");
 
 const bookingsDefs = gql`
   type Booking {
+    booking_id:Int
     package_id: Int
     booking_date: String
     count: Int
@@ -10,12 +11,12 @@ const bookingsDefs = gql`
     package_img: String
     title: String
     days: String
-    description: String
+    visit_place: String
     price: Float
     location: String
   }
   type Query {
-    getBookingByUser(userId: Int!): [Booking]
+    getBookingByUser(user_id: Int!): [Booking]
   }
 
   type Mutation {

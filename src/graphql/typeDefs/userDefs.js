@@ -6,6 +6,7 @@ const userDefs=gql`
         name:String
         email:String
         phone_number:String
+        role:String
     }
     
     type Query{
@@ -16,6 +17,7 @@ const userDefs=gql`
     type Mutation{
         createUser(name:String!,email:String!,phone_number:String!,password:String!):User
         updateUser(name:String!,phone_number:String!,user_id:Int!):User
+        logout:String
     }
 `
 
