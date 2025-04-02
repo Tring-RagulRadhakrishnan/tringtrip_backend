@@ -76,7 +76,7 @@ const packageResolver = {
       try {
         const offset = (page - 1) * 6;
         const response = await pool.query(
-          `select package_id,package_img,title,days,visit_place,price from packages limit 6 offset ${offset}`
+          `select package_id,package_img,title,days,visit_place,price, COUNT(*) OVER() AS total_count from packages limit 6 offset ${offset}`
         );
         if (response.rowCount === 0)
           throw new Error("No package available for this location");

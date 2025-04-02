@@ -6,10 +6,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req, res }) => ({ req, res }),
-  // context: ({ req, res }) => {
-  //   const user = authMiddleware(req);
-  //   return { req, res, user };
-  // },
+  
 });
 
   await server.start()

@@ -9,6 +9,7 @@ const packageDefs = gql`
     visit_place: String
     price: Int
     location: String
+    total_count:Int
   }
 
   type Query {
