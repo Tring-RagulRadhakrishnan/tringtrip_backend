@@ -91,7 +91,6 @@ const userResolver = {
 
         const token = generateToken({
           id: userData.user_id,
-          role: "user",
         });
         setCookie(token, res);
 
@@ -120,7 +119,16 @@ const userResolver = {
         console.log("error from user resolver getUser", err);
       }
     },
-    
+    getCookie: async (_, {}, { req }) => {
+      try {
+        const cookie = req?.headers?.cookie;
+        console.log(cookie);
+        if (!cookie) throw new Error("Cookie not Found");
+        else return cookie;
+      } catch (err) {
+        console.log("error log from getcookie", err);
+      }
+    },
   },
 };
 

@@ -16,7 +16,7 @@ const bookingsDefs = gql`
     location: String
   }
   type Query {
-    getBookingByUser(user_id: Int!): [Booking]
+    getBookingByUser: [Booking]
   }
 
   type Mutation {

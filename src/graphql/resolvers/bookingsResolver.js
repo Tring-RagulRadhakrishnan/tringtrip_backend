@@ -1,4 +1,5 @@
 const pool = require("../../config/database");
+const authMiddleware = require("../../middleware/authMiddleware");
 
 const bookingsResolver = {
   Mutation: {
@@ -21,11 +22,11 @@ const bookingsResolver = {
     },
   },
   Query: {
-    getBookingByUser: async (_, { user_id }) => {
-        console.log(user_id);
+    getBookingByUser: async (_, {  },{req}) => {
         
+       const  user_id = authMiddleware(req);
       try {
-        console.log(user_id);
+        //console.log(user_id);
         
         const response = await pool.query(
           `select 
