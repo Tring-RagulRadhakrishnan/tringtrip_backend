@@ -1,6 +1,5 @@
 const { ApolloServer } = require("apollo-server-express");
 const {typeDefs,resolvers} = require('../graphql/index.js')
-const authMiddleware = require('../middleware/authMiddleware.js')
 const apolloServer =async (app)=>{
 const server = new ApolloServer({
   typeDefs,

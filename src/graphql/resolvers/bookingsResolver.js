@@ -45,7 +45,7 @@ const bookingsResolver = {
         from bookings bp
         join packages p ON bp.package_id = p.package_id
         where bp.user_id = $1`,
-          [user_id]
+          [user_id.id]
         );
         if(response.rowCount===0){
             throw new Error("No Booking is there");

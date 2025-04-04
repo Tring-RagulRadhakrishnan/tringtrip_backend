@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const pool = require("../../config/database");
+const CryptoJS = require("crypto-js")
+require("dotenv").config()
 const generateToken = require("../../utils/generateJwtToken");
 const setCookie = require("../../utils/setCookie");
 const authMiddleware = require("../../middleware/authMiddleware");
@@ -9,6 +11,8 @@ const userResolver = {
     createUser: async (_, { name, email, phone_number, password }) => {
       try {
         console.log(name, email, phone_number);
+        console.log(password);
+        
 
         const existingUser = await pool.query(
           "SELECT * FROM user_details WHERE email=$1",
@@ -16,11 +20,13 @@ const userResolver = {
         );
 
         if (existingUser.rowCount > 0) throw new Error("user is already found");
-        // const hashPassword = await bcrypt.hash(password, 10);
 
+        const decodePassword = CryptoJS.AES.decrypt(password,process.env.PASSWORD_DECRYPT_KEY).toString(CryptoJS.enc.Utf8);
+        
+        const hashedPassword = await bcrypt.hash(decodePassword, 5);
         const res = await pool.query(
           "INSERT INTO user_details(name,email,phone_number,password) VALUES ($1,$2,$3,$4) RETURNING user_id, name",
-          [name, email, phone_number, password]
+          [name, email, phone_number, hashedPassword]
         );
 
         // console.log(res.rows[0]);
@@ -74,9 +80,10 @@ const userResolver = {
         if (response.rowCount === 0) {
           throw new Error("User Not Found");
         }
+        const decodePassword = CryptoJS.AES.decrypt(password,process.env.PASSWORD_DECRYPT_KEY).toString(CryptoJS.enc.Utf8);
 
         const userData = response.rows[0];
-        const match = await bcrypt.compare(password, userData.password);
+        const match = await bcrypt.compare(decodePassword, userData.password);
 
         if (!match) {
           throw new Error("Invalid Password");
@@ -119,16 +126,7 @@ const userResolver = {
         console.log("error from user resolver getUser", err);
       }
     },
-    getCookie: async (_, {}, { req }) => {
-      try {
-        const cookie = req?.headers?.cookie;
-        console.log(cookie);
-        if (!cookie) throw new Error("Cookie not Found");
-        else return cookie;
-      } catch (err) {
-        console.log("error log from getcookie", err);
-      }
-    },
+    
   },
 };
 
