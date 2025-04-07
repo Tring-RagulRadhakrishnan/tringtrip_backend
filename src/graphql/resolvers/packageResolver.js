@@ -1,5 +1,4 @@
 const pool = require("../../config/database");
-const authMiddleware = require("../../middleware/authMiddleware");
 
 const packageResolver = {
   Mutation: {

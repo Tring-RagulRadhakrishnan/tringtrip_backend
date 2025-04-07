@@ -3,9 +3,8 @@ const authMiddleware = require('../../middleware/authMiddleware')
 
 const locationResolver = {
   Query: {
-    getBestPackage: async (_,{},{req}) => {
+    getBestPackage: async (_,{}) => {
 
-      // const user = authMiddleware(req);
       
       try {
         const response = await pool.query(
@@ -21,8 +20,7 @@ const locationResolver = {
       }
     },
 
-    getVisaFreePackage: async (_,{},{req}) => {
-      // const user = authMiddleware(req);
+    getVisaFreePackage: async (_,{},) => {
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE visa_free=true"
@@ -33,8 +31,7 @@ const locationResolver = {
         console.log("log from free visa resolver", err);
       }
     },
-    getInternationalPackage: async (_,{},{req}) => {
-      // const user = authMiddleware(req);
+    getInternationalPackage: async (_,{}) => {
       try {
         const response = await pool.query(
           "SELECT tp_id,location,image,cover_image,subtitle FROM tourist_place WHERE is_international=true"

@@ -26,7 +26,6 @@ const bookingsResolver = {
         
        const  user_id = authMiddleware(req);
       try {
-        //console.log(user_id);
         
         const response = await pool.query(
           `select 
