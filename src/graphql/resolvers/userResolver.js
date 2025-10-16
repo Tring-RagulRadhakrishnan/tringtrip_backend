@@ -29,7 +29,6 @@ const userResolver = {
           [name, email, phone_number, hashedPassword]
         );
 
-        // console.log(res.rows[0]);
         console.log("user registration successfull");
 
         return res.rows[0];
@@ -42,7 +41,7 @@ const userResolver = {
     updateUser: async (_, { name, phone_number, user_id }) => {
       try {
         const response = await pool.query(
-          "update user_details set name  = $1, phone_number = $2 where user_id = $3 returning user_id,name,email,phone_number",
+          "update user_details set name  = $1, phone_number = $2 ,updated_at = CURRENT_TIMESTAMP where user_id = $3 returning user_id,name,email,phone_number",
           [name, phone_number, user_id]
         );
         if (response.rowCount === 0) {

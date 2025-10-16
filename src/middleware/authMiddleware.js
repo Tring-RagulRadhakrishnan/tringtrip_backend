@@ -4,6 +4,8 @@ require('dotenv').config()
 
 const authMiddleware = (req) => {
   const token = req?.headers?.cookie?.split("=")[1];
+
+  
   if (!token) {
     throw new Error("Authentication token is missing");
   }
